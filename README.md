@@ -1,9 +1,9 @@
 # WLSDECRYPTER
 Oracle WebLogic has stored all of it's password in AES cryptstrings. As expected, these are reversible if the key is known. And given a Weblogic installation, it is, in the SerializedSystemIni.dat file. 
 
-There are a few blogs that document how to unroll these passwords. This script will do this for you, decrypting every password it can find in the Weblogic configuration files. 
+This script will attempt to parse all of the WebLogic configuration files, decrypting every password it can find showing the configuration file and location of the ciphertext. 
 ```
-wlst.sh wlsdecryptor.py /data/domains/basedomain
+wlst.sh wlsdecryptor.py /data/domains/mydomain
 Initializing WebLogic Scripting Tool (WLST) ...
 
 Welcome to WebLogic Server Administration Scripting Shell
