@@ -11,7 +11,6 @@ basepath = "./config/"
 domainpath = ""
 
 class wlsHandler(xml.sax.ContentHandler):
-    global pws
     lastelement = ""
     filename = ""
     found = False
@@ -19,8 +18,13 @@ class wlsHandler(xml.sax.ContentHandler):
     def __init__(self, filename):
         xml.sax.ContentHandler.__init__(self)
         self.filename = filename
+        self.nextLinePlease = False
+        self.isjdbc = False
+        self.jdbcuser = ""
 
     def startElement(self, name, attrs):
+        if name == "jdbc-data-source":
+            self.isjdbc = True
         self.lastelement = name
 
     def characters(self, chars = ""):
@@ -36,7 +40,18 @@ class wlsHandler(xml.sax.ContentHandler):
             print("Config element: " + self.lastelement)
             print(chars)
             pw = decrypt(cleanCryptString(chars))
-            print("Decrypted to:\n" + pw + "\n")
+            print("Decrypted to:\n" + pw )
+            if self.isjdbc and self.jdbcuser != "":
+                print("For database user: " + self.jdbcuser)
+            print("\n")
+        ## Oracle database user name entry
+        elif self.isjdbc and self.nextLinePlease and self.lastelement == "value":
+            self.jdbcuser = chars
+            self.nextLinePlease = False
+        elif self.isjdbc and chars == "user":
+            print("Possible Oracle user name found in: " + self.filename)
+            self.nextLinePlease = True
+
 
 def cleanCryptString(crypt):
     return crypt.strip(' \t\n\r').replace("\\", "")
